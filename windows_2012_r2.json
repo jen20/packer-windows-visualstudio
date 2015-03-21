@@ -1,0 +1,144 @@
+{
+    "builders": [
+        {
+            "type": "vmware-iso",
+            "iso_url": "./iso/windows/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.iso",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "458ff91f8abc21b75cb544744bf92e6a",
+            "headless": false,
+            "boot_wait": "2m",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_wait_timeout": "4h",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "guest_os_type": "windows8srv-64",
+            "tools_upload_flavor": "windows",
+            "disk_size": 61440,
+            "vnc_port_min": 5900,
+            "vnc_port_max": 5980,
+            "floppy_files": [
+                "./answer_files/2012_r2/Autounattend.xml",
+                "./answer_files/vs/AdminDeployment.xml",
+                "./scripts/microsoft-updates.bat",
+                "./scripts/win-updates.ps1",
+                "./scripts/openssh.ps1",
+                "./scripts/chocolatey.bat"
+            ],
+            "vmx_data": {
+                "RemoteDisplay.vnc.enabled": "false",
+                "RemoteDisplay.vnc.port": "5900",
+                "memsize": "2048",
+                "numvcpus": "2",
+                "scsi0.virtualDev": "lsisas1068",
+                "gui.fitGuestUsingNativeDisplayResolution": "TRUE",
+                "gui.applyHostDisplayScalingToGuest": "FALSE"
+            }
+        },
+        {
+            "type": "virtualbox-iso",
+            "iso_url": "./iso/windows/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.iso",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "458ff91f8abc21b75cb544744bf92e6a",
+            "headless": false,
+            "boot_wait": "2m",
+            "ssh_username": "vagrant",
+            "ssh_password": "vagrant",
+            "ssh_wait_timeout": "4h",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "guest_os_type": "Windows2012_64",
+            "disk_size": 61440,
+            "floppy_files": [
+                "./answer_files/2012_r2/Autounattend.xml",
+                "./answer_files/vs/AdminDeployment.xml",
+                "./config/oracle-cert.cer",
+                "./scripts/microsoft-updates.bat",
+                "./scripts/win-updates.ps1",
+                "./scripts/openssh.ps1",
+                "./scripts/chocolatey.bat"
+            ],
+            "vboxmanage": [
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--memory",
+                    "2048"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--cpus",
+                    "2"
+                ]
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "./config",
+            "destination": "/tmp"
+        },
+        {
+            "type": "file",
+            "source": "./iso/other",
+            "destination": "/tmp"
+        },
+        {
+            "type": "shell",
+            "remote_path": "/tmp/script.bat",
+            "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+            "scripts": [
+                "./scripts/vm-guest-tools.bat",
+                "./scripts/vagrant-ssh.bat",
+                "./scripts/enable-rdp.bat",
+                "./scripts/disable-auto-logon.bat",
+                "./scripts/misc-packages.bat"
+            ]
+        },
+        {
+            "type": "shell",
+            "remote_path": "/tmp/script.ps1",
+            "execute_command": "{{.Vars}} powershell -File c:/Windows/Temp/script.ps1",
+            "scripts": [
+                "./scripts/dis-updates.ps1",
+                "./scripts/workstation-features.ps1",
+                "./scripts/fonts.ps1",
+                "./scripts/vs-pi.ps1",
+                "./scripts/extra-dev-tools.ps1"
+            ]
+        },
+        {
+            "type": "shell",
+            "remote_path": "/tmp/script.bat",
+            "execute_command": "{{.Vars}} cmd /c c:/Windows/Temp/script.bat",
+            "script": "./scripts/screen_dpi_vmware.bat",
+            "only": ["vmware-iso"]
+        },
+        {
+            "type": "shell",
+            "remote_path": "/tmp/script.bat",
+            "execute_command": "{{.Vars}} cmd /c c:/Windows/Temp/script.bat",
+            "scripts": [
+                "./scripts/compile-dotnet-assemblies.bat",
+                "./scripts/restart.bat"
+            ]
+        },
+        {
+            "type": "shell",
+            "remote_path": "/tmp/script.bat",
+            "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+            "scripts": [
+                "./scripts/cleartemp.bat",
+                "./scripts/compact.bat"
+            ]
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "vagrant",
+            "keep_input_artifact": false,
+            "output": "windows_2012_r2_{{.Provider}}.box",
+            "vagrantfile_template": "vagrantfile-windows_2012_r2.template"
+        }
+    ]
+}
