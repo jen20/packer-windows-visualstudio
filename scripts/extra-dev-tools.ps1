@@ -1,5 +1,5 @@
 Write-Host "Installing Resharper..."
-Start-Process -FilePath C:\windows\temp\other\ReSharperAndToolsPacked01Update1.exe -ArgumentList "/SpecificProductNames=ReSharper;dotTrace;dotCover;dotPeek /Silent=True /VsVersion=12" -Wait -NoNewWindow
+Start-Process -FilePath C:\windows\temp\other\ReSharper.exe -ArgumentList "/SpecificProductNames=ReSharper;dotTrace;dotCover;dotPeek /Silent=True /VsVersion=12" -Wait -NoNewWindow
 
 Write-Host "Installing Resharper Command Line Tools..."
 choco install -y resharper-clt
