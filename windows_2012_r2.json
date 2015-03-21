@@ -2,7 +2,7 @@
     "builders": [
         {
             "type": "vmware-iso",
-            "iso_url": "./iso/windows/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.iso",
+            "iso_url": "./iso/windows/windows2012trial.iso",
             "iso_checksum_type": "md5",
             "iso_checksum": "458ff91f8abc21b75cb544744bf92e6a",
             "headless": false,
@@ -36,7 +36,7 @@
         },
         {
             "type": "virtualbox-iso",
-            "iso_url": "./iso/windows/9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.iso",
+            "iso_url": "./iso/windows/windows2012trial.iso",
             "iso_checksum_type": "md5",
             "iso_checksum": "458ff91f8abc21b75cb544744bf92e6a",
             "headless": false,
